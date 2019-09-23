@@ -9,8 +9,8 @@ import com.unware.mediaapp.model.Audio
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-
-
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+import java.lang.Exception
 
 
 class MediaListViewModel : ViewModel(), CoroutineScope {
@@ -49,8 +49,6 @@ class MediaListViewModel : ViewModel(), CoroutineScope {
             sortOrder  /* SORT BY*/
         )
 
-
-
         if (c != null) {
 
             c.moveToFirst()
@@ -83,13 +81,50 @@ class MediaListViewModel : ViewModel(), CoroutineScope {
 
                 val audioModel = Audio(mediaId.toLong(), path, name, album, albumId, albumArtPath, artist)
 
-                // println("Audio file: $audioModel")
-
                 tempAudioList.add(audioModel)
 
                 c.moveToNext()
             }
             c.close()
+        }
+
+        val videoProjection = arrayOf(
+            MediaStore.Video.Media._ID,
+            MediaStore.Video.Media.DATA,
+            MediaStore.Video.Media.DISPLAY_NAME,
+            MediaStore.Video.Media.SIZE
+        )
+        val cursorVideo = MediaApp.applicationContext().contentResolver.query(
+            MediaStore.Video.Media.EXTERNAL_CONTENT_URI,
+            videoProjection,
+            null as String?,
+            null as Array<String>?,
+            " _id DESC"
+        )
+
+        try {
+            if (cursorVideo != null) {
+                cursorVideo.moveToFirst()
+                do {
+                    val videoId =
+                        cursorVideo.getLong(cursorVideo.getColumnIndexOrThrow(MediaStore.Video.Media._ID))
+                    val videoPath =
+                        cursorVideo.getString(cursorVideo.getColumnIndexOrThrow(MediaStore.Video.Media.DATA))
+                    val videoDisplayName =
+                        cursorVideo.getString(cursorVideo.getColumnIndexOrThrow(MediaStore.Video.Media.DISPLAY_NAME))
+                    val videoSize =
+                        cursorVideo.getString(cursorVideo.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE))
+
+                    val videoItem = Audio(videoId, videoPath, videoDisplayName, "", 0, "", "")
+
+                    println("Video size: $videoSize item: $videoItem")
+                } while (cursorVideo.moveToNext())
+
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        } finally {
+            cursorVideo?.close()
         }
 
         return tempAudioList
