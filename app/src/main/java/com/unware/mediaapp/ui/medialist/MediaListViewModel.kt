@@ -80,7 +80,7 @@ class MediaListViewModel : ViewModel(), CoroutineScope {
                 println("Media Id: $mediaId albumId: $albumId, album: $album, albumArt: $albumArtPath")
 
                 val audioModel = Audio(mediaId.toLong(), path, name, album, albumId, albumArtPath, artist)
-
+                audioModel.mediaType = Audio.AUDIO
                 tempAudioList.add(audioModel)
 
                 c.moveToNext()
@@ -116,6 +116,8 @@ class MediaListViewModel : ViewModel(), CoroutineScope {
                         cursorVideo.getString(cursorVideo.getColumnIndexOrThrow(MediaStore.Video.Media.SIZE))
 
                     val videoItem = Audio(videoId, videoPath, videoDisplayName, "", 0, "", "")
+                    videoItem.mediaType = Audio.VIDEO
+                    tempAudioList.add(videoItem)
 
                     println("Video size: $videoSize item: $videoItem")
                 } while (cursorVideo.moveToNext())

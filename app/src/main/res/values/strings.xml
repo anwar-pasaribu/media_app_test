@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MediaApp</string>
+    <string name="title_media_player">Media</string>
+    <string name="title_gallery">Gallery</string>
+    <string name="title_media_detail">Player</string>
+    <string name="title_media_list">Media List</string>
+    <string name="title_gallery_list">Gallery List</string>
 </resources>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_media"
+    app:startDestination="@id/fragment_media_list">
+
+    <fragment
+        android:id="@+id/fragment_media_list"
+        android:name="com.unware.mediaapp.ui.medialist.MediaListFragment"
+        tools:layout="@layout/media_list_fragment">
+
+        <action
+            android:id="@+id/action_open_media_detail"
+            app:destination="@+id/fragment_media_detail" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_media_detail"
+        android:name="com.unware.mediaapp.ui.mediadetail.MediaDetailFragment"
+        tools:layout="@layout/media_detail_fragment">
+
+        <argument
+            android:name="mediaItem"
+            app:argType="com.unware.mediaapp.model.Audio" />
+
+    </fragment>
+
+</navigation>

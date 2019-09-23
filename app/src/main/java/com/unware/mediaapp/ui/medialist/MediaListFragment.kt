@@ -14,19 +14,18 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.unware.mediaapp.databinding.MediaListFragmentBinding
+import com.unware.mediaapp.model.Audio
 
 
-class MediaListFragment : Fragment() {
+class MediaListFragment : Fragment(), MediaListAdapter.MediaListItemListener {
 
     companion object {
-        fun newInstance() = MediaListFragment()
-
         private const val REQUEST_PERMISSIONS: Int = 100
     }
 
     private lateinit var viewModel: MediaListViewModel
 
-    private val adapter by lazy { MediaListAdapter() }
+    private val adapter by lazy { MediaListAdapter(this) }
 
     private val IMAGE_LOADER_ID = 1
     private val listOfAllImages = ArrayList<String>()
@@ -69,6 +68,10 @@ class MediaListFragment : Fragment() {
                 adapter.submitList(audioList)
             }
         })
+    }
+
+    override fun playMedia(audio: Audio, position: Int) {
+        println("Play: $audio, pos: $position")
     }
 
     private fun beginRequestPermissions() {
