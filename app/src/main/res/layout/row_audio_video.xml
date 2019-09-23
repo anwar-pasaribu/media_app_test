@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="audio"
+            type="com.unware.mediaapp.model.Audio" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height_m"
+        android:paddingTop="@dimen/gap_one"
+        android:paddingBottom="@dimen/gap_one">
+
+        <ImageView
+            android:id="@+id/iv_row_audio_video_main"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/gap_l"
+            android:scaleType="centerCrop"
+            app:imageFromFilePath="@{audio.albumArtPath}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <TextView
+            android:id="@+id/tv_row_audio_video_title"
+            style="?attr/textAppearanceListItem"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:paddingLeft="@dimen/gap_l"
+            android:paddingRight="@dimen/gap_l"
+            android:text="@{audio.name}"
+            app:layout_constraintBottom_toTopOf="@+id/tv_row_audio_video_artist"
+            app:layout_constraintLeft_toRightOf="@id/iv_row_audio_video_main"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="@tools:sample/cities" />
+
+        <TextView
+            android:id="@+id/tv_row_audio_video_artist"
+            style="?attr/textAppearanceListItemSecondary"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:paddingLeft="@dimen/gap_l"
+            android:paddingRight="@dimen/gap_l"
+            android:text="@{audio.artist}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/tv_row_audio_video_title"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_row_audio_video_title"
+            tools:text="@tools:sample/cities" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
