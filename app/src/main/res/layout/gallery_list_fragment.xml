@@ -6,12 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".ui.gallerylist.GalleryListFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_gallery_list_fragment"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/srl_gallery_list_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
-        app:spanCount="@integer/gallery_span_count"
-        tools:listitem="@layout/row_gallery_item" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_gallery_list_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="@dimen/gap_one"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.StaggeredGridLayoutManager"
+            app:spanCount="@integer/gallery_span_count"
+            tools:listitem="@layout/row_gallery_item" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </FrameLayout>

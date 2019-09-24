@@ -8,6 +8,23 @@
     <fragment
         android:id="@+id/fragment_gallery_list"
         android:name="com.unware.mediaapp.ui.gallerylist.GalleryListFragment"
-        tools:layout="@layout/gallery_list_fragment"/>
+        tools:layout="@layout/gallery_list_fragment">
+
+        <action
+            android:id="@+id/action_open_gallery_detail"
+            app:destination="@id/fragment_gallery_detail" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_gallery_detail"
+        android:name="com.unware.mediaapp.ui.gallerydetail.GalleryDetailFragment"
+        tools:layout="@layout/gallery_detail_fragment">
+
+        <argument
+            android:name="gallery"
+            app:argType="com.unware.mediaapp.model.Gallery" />
+
+    </fragment>
 
 </navigation>

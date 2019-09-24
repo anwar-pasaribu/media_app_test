@@ -9,9 +9,13 @@ import java.io.IOException
 import java.util.concurrent.Executor
 
 class PageKeyedDataSource(
-        private val apiRequest: ApiInterface,
-        private val retryExecutor: Executor
+    private val apiRequest: ApiInterface,
+    private val retryExecutor: Executor
 ) : PageKeyedDataSource<String, Gallery>() {
+
+    companion object {
+        private const val API_KEY = "10961674-bf47eb00b05f514cdd08f6e11"
+    }
 
     // keep a function reference for the retry event
     private var retry: (() -> Any)? = null
@@ -31,46 +35,38 @@ class PageKeyedDataSource(
         }
     }
 
-    override fun loadInitial(params: LoadInitialParams<String>, callback: LoadInitialCallback<String, Gallery>) {
+    override fun loadInitial(
+        params: LoadInitialParams<String>,
+        callback: LoadInitialCallback<String, Gallery>
+    ) {
 
-        val queryParams = HashMap<String, String>()
-        queryParams["api_key"] = "ZME7nTxOPIqXCf9qhCfqB1ICqtFCbCs5"
-        queryParams["lang"] = "id"
-        if (searchQuery.isNotEmpty()) queryParams["q"] = searchQuery
-        queryParams["limit"] = params.requestedLoadSize.toString()
-        queryParams["offset"] = "0"
+        val queryParams = mutableMapOf<String, String>()
+        queryParams["key"] = API_KEY
+        queryParams["page"] = "1"
 
+        val initialRequest = apiRequest.getGalleryList(queryParams)
 
-        val initialRequest = if (searchQuery.isEmpty()) {
-            apiRequest.giphyTrending(queryParams)
-        } else {
-            apiRequest.giphySearch(queryParams)
-        }
-
-        // update network states.
-        // we also provide an initial load state to the listeners so that the UI can know when the
-        // very first list is loaded.
-        initialLoad.postValue(RequestStatus.LOADING)
+        // Initial Loading Indicator
+        initialLoad.postValue(RequestStatus.loading("Initial load"))
 
         try {
             val response = initialRequest.execute()
-            val gifList = response.body()?.data?.map { it } ?: emptyList()
-            val prevPageKey = response.body()?.pagination?.offset
-            val nextPageKey = response.body()?.pagination?.offset?.plus(Constants.SB_API_REQUEST_LIMIT)
+            val gifList = response.body()?.hits?.map { it } ?: emptyList()
+            val prevPageKey = "0"
+            val nextPageKey = "2"
 
             retry = null
 
             initialLoad.postValue(
-                    if (gifList.isEmpty()) RequestStatus.NO_DATA
-                    else RequestStatus.FINISHED
+                if (gifList.isEmpty()) RequestStatus.nodata("No gallery")
+                else RequestStatus.finished("Finished get first page")
             )
 
-
             callback.onResult(
-                    gifList,
-                    prevPageKey.toString(),
-                    nextPageKey.toString()
-                    )
+                gifList,
+                prevPageKey,
+                nextPageKey
+            )
 
         } catch (iOEx: IOException) {
             retry = { loadInitial(params, callback) }
@@ -78,37 +74,29 @@ class PageKeyedDataSource(
         }
     }
 
-    override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<String, GiphyImage>) {
+    override fun loadAfter(params: LoadParams<String>, callback: LoadCallback<String, Gallery>) {
 
         val queryParams = HashMap<String, String>()
-        queryParams["api_key"] = "ZME7nTxOPIqXCf9qhCfqB1ICqtFCbCs5"
-        queryParams["lang"] = "id"
-        if (searchQuery.isNotEmpty()) queryParams["q"] = searchQuery
-        queryParams["limit"] = Constants.SB_API_REQUEST_LIMIT.toString()
-        queryParams["offset"] = params.key
+        queryParams["key"] = API_KEY
+        queryParams["page"] = params.key
 
+        val initialRequest = apiRequest.getGalleryList(queryParams)
 
-        val initialRequest = if (searchQuery.isEmpty()) {
-            apiRequest.giphyTrending(queryParams)
-        } else {
-            apiRequest.giphySearch(queryParams)
-        }
-
-        networkState.postValue(RequestStatus.LOADING)
+        networkState.postValue(RequestStatus.loading("Loading more..."))
 
         try {
             val response = initialRequest.execute()
-            val gifList = response.body()?.data?.map { it } ?: emptyList()
-            val nextPageKey = response.body()?.pagination?.offset
+            val gifList = response.body()?.hits?.map { it } ?: emptyList()
+            val nextPageKey = params.key.toIntOrNull()
 
             retry = null
 
             callback.onResult(
-                    gifList,
-                    (nextPageKey?.plus(Constants.SB_API_REQUEST_LIMIT)).toString()
+                gifList,
+                (nextPageKey?.plus(1)).toString()
             )
 
-            networkState.postValue(RequestStatus.FINISHED)
+            networkState.postValue(RequestStatus.finished("Page $nextPageKey loaded"))
 
         } catch (iOEx: IOException) {
             retry = { loadAfter(params, callback) }
@@ -116,7 +104,7 @@ class PageKeyedDataSource(
         }
     }
 
-    override fun loadBefore(params: LoadParams<String>, callback: LoadCallback<String, GiphyImage>) {
+    override fun loadBefore(params: LoadParams<String>, callback: LoadCallback<String, Gallery>) {
         // pass
     }
 }

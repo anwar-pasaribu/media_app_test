@@ -10,4 +10,6 @@
     <dimen name="text_title">16sp</dimen>
 
     <dimen name="gallery_span_count">2</dimen>
+    <dimen name="clickable_size_48">48dp</dimen>
+    <dimen name="clickable_size_32">32dp</dimen>
 </resources>

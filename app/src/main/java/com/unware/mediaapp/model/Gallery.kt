@@ -1,5 +1,9 @@
 package com.unware.mediaapp.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class Gallery(
     val largeImageURL: String,
     val webformatHeight: Long,
@@ -23,4 +27,4 @@ data class Gallery(
     val previewWidth: Long,
     val userImageURL: String,
     val previewURL: String
-)
+): Parcelable

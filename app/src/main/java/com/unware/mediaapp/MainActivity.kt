@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.unware.mediaapp.extensions.setupWithNavController
+import com.unware.mediaapp.ui.gallerydetail.GalleryDetailFragmentArgs
 import com.unware.mediaapp.ui.mediadetail.MediaDetailFragmentArgs
 
 class MainActivity : AppCompatActivity() {
@@ -42,27 +43,36 @@ class MainActivity : AppCompatActivity() {
 
         // Whenever the selected controller changes, setup the action bar.
         controller.observe(this, Observer { navController ->
+            println("TOTO cont: re: $navController, cur dest: ${navController?.currentDestination}, cur dest lbl: ${navController?.currentDestination?.arguments}")
+
             setupActionBarWithNavController(navController)
+
+            navController?.addOnDestinationChangedListener { _, destination, arguments ->
+                var toolbarTile = " "
+                when (destination.id) {
+                    R.id.fragment_media_list -> {
+                        toolbarTile = getString(R.string.title_media_list)
+                    }
+                    R.id.fragment_media_detail -> {
+                        arguments?.let {
+                            val name = MediaDetailFragmentArgs.fromBundle(it).mediaItem.name
+                            toolbarTile = name
+                        }
+                    }
+                    R.id.fragment_gallery_list -> {
+                        toolbarTile = getString(R.string.title_gallery_list)
+                    }
+                    R.id.fragment_gallery_detail -> {
+                        arguments?.let {
+                            toolbarTile = GalleryDetailFragmentArgs.fromBundle(it).gallery.tags
+                        }
+                    }
+                }
+                title = toolbarTile
+            }
         })
         currentNavController = controller
 
-        controller.value?.addOnDestinationChangedListener { controller, destination, arguments ->
-            var toolbarTile = " "
-            when (destination.id) {
-                R.id.fragment_media_list -> {
-                    toolbarTile = getString(R.string.title_media_list)
-                }
-                R.id.fragment_media_detail -> {
-                    arguments?.let {
-                        val name = MediaDetailFragmentArgs.fromBundle(it).mediaItem.name
-                        println("Name: $name")
-                        toolbarTile = name
-                    }
-                    println("Detail args: $arguments")
-                }
-            }
-            title = toolbarTile
-        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
