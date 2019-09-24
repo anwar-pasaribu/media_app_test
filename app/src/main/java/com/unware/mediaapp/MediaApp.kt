@@ -3,6 +3,7 @@ package com.unware.mediaapp
 import android.app.Application
 
 class MediaApp: Application() {
+
     init {
         instance = this
     }
